@@ -1,0 +1,55 @@
+{
+  "manifest_version": 3,
+  "name": "Guardrails",
+  "version": "1.0.0",
+  "description": "Route allowlist for sites that are otherwise infinite.",
+  "permissions": [
+    "declarativeNetRequest"
+  ],
+  "host_permissions": [
+    "*://youtube.com/*",
+    "*://www.youtube.com/*",
+    "*://m.youtube.com/*",
+    "*://instagram.com/*",
+    "*://www.instagram.com/*"
+  ],
+  "declarative_net_request": {
+    "rule_resources": [
+      {
+        "id": "guardrails",
+        "enabled": true,
+        "path": "generated/rules.json"
+      }
+    ]
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://youtube.com/*",
+        "*://www.youtube.com/*",
+        "*://m.youtube.com/*",
+        "*://instagram.com/*",
+        "*://www.instagram.com/*"
+      ],
+      "js": [
+        "generated/policy.js",
+        "content/guard.js"
+      ],
+      "css": [
+        "generated/hide.css"
+      ],
+      "run_at": "document_start",
+      "all_frames": false
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "pages/blocked.html"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ]
+}

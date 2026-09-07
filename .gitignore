@@ -1,0 +1,3 @@
+dist/guardrails.crx
+dist/*.mobileconfig
+extension/generated/
