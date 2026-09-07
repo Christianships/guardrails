@@ -13,8 +13,17 @@
   h1 { margin: 0; font-size: 1.25rem; font-weight: 600; }
   p { margin: 0; max-width: 46ch; opacity: 0.7; }
   code { font: 400 0.875em ui-monospace, SFMono-Regular, monospace; opacity: 0.6; }
+  .actions { display: flex; gap: 0.5rem; margin-top: 0.5rem; }
+  a.button {
+    padding: 0.5rem 0.9rem; border-radius: 0.5rem; text-decoration: none;
+    border: 1px solid color-mix(in srgb, CanvasText 25%, transparent);
+    color: CanvasText; font-size: 0.9375rem;
+  }
+  a.button:hover { background: color-mix(in srgb, CanvasText 8%, transparent); }
 </style>
 <h1 id="title">Not on the list.</h1>
 <p id="detail"></p>
 <p><code id="route"></code></p>
+<div class="actions" id="actions"></div>
+<script src="../generated/policy.js"></script>
 <script src="blocked.js"></script>

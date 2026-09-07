@@ -22,6 +22,9 @@
 //   always Routes that outrank every other rule, deny included. Login, 2FA and
 //          verification live here. Locking yourself out of your own account is
 //          the one failure that makes the whole tool unusable.
+//   loginUrl Offered as a button on the interstitial. Where a site's root is
+//          blocked, the sign-in page is otherwise unreachable -- you cannot
+//          log in to a site whose front door you closed.
 //   landing Where the site root goes instead of the feed. `null` means the root
 //          is hard-blocked instead -- used where the redirect target needs a
 //          username I do not have yet.
@@ -35,6 +38,7 @@
 export const sites = [
   {
     id: 'youtube',
+    loginUrl: 'https://accounts.google.com/ServiceLogin?service=youtube',
     label: 'YouTube',
     hosts: ['youtube.com', 'www.youtube.com', 'm.youtube.com'],
     landing: '/feed/you',
@@ -72,6 +76,7 @@ export const sites = [
 
   {
     id: 'instagram',
+    loginUrl: 'https://www.instagram.com/accounts/login/',
     label: 'Instagram',
     hosts: ['instagram.com', 'www.instagram.com'],
     landing: '/christianships/',
@@ -112,6 +117,7 @@ export const sites = [
 
   {
     id: 'tiktok',
+    loginUrl: 'https://www.tiktok.com/login',
     label: 'TikTok',
     hosts: ['tiktok.com', 'www.tiktok.com'],
     landing: null, // needs your @handle
@@ -134,6 +140,7 @@ export const sites = [
 
   {
     id: 'threads',
+    loginUrl: 'https://www.threads.com/login',
     label: 'Threads',
     hosts: ['threads.com', 'www.threads.com', 'threads.net', 'www.threads.net'],
     landing: '/@christianships',
@@ -156,6 +163,7 @@ export const sites = [
 
   {
     id: 'x',
+    loginUrl: 'https://x.com/i/flow/login',
     label: 'X',
     hosts: ['x.com', 'www.x.com', 'twitter.com', 'www.twitter.com'],
     landing: null, // needs your @handle
@@ -184,6 +192,7 @@ export const sites = [
 
   {
     id: 'facebook',
+    loginUrl: 'https://www.facebook.com/login',
     label: 'Facebook',
     hosts: ['facebook.com', 'www.facebook.com', 'm.facebook.com'],
     landing: '/me', // resolves to your own profile without needing a username
@@ -215,6 +224,7 @@ export const sites = [
 
   {
     id: 'reddit',
+    loginUrl: 'https://www.reddit.com/login',
     label: 'Reddit',
     hosts: ['reddit.com', 'www.reddit.com', 'old.reddit.com', 'np.reddit.com'],
     landing: null, // needs your username
