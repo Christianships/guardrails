@@ -7,8 +7,8 @@ PROFILE="$HOME/Library/Application Support/net.imput.helium/Default"
 check() { if eval "$2" >/dev/null 2>&1; then echo "  ok    $1"; else echo "  FAIL  $1"; fi; }
 
 echo "Guardrails ($ID)"
-check "profile delivered policy to managed prefs" \
-  "grep -qa ExtensionSettings '/Library/Managed Preferences/$USER/complete.plist'"
+check "policy delivered as mandatory" \
+  "plutil -extract ExtensionSettings raw -o - '/Library/Managed Preferences/$USER/net.imput.helium.plist'"
 check "external manifest staged" \
   "ls '/Library/Application Support/'*'/External Extensions/$ID.json'"
 check "crx staged root-owned" \

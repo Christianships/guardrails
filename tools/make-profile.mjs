@@ -17,7 +17,11 @@ const id = readFileSync(join(root, 'dist', 'extension-id.txt'), 'utf8').trim()
 // Root-owned, outside $HOME: undoing this should require deliberate terminal
 // work, not a Finder drag.
 const INSTALL_DIR = '/Library/Application Support/Guardrails'
-const updateUrl = `file://${INSTALL_DIR.replace(/ /g, '%20')}/update.xml`
+const HTTP_PORT = 47823
+const updateUrl =
+  process.env.GUARDRAILS_TRANSPORT === 'http'
+    ? `http://127.0.0.1:${HTTP_PORT}/update.xml`
+    : `file://${INSTALL_DIR.replace(/ /g, '%20')}/update.xml`
 
 const plist = (v, indent = '\t') => {
   if (Array.isArray(v))
