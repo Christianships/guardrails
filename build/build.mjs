@@ -67,6 +67,17 @@ for (const site of sites) {
     })
   }
 
+  // 2b. Where the redirect needs no login check, do it at the network layer:
+  //     the content script cannot run before the feed has already painted.
+  if (site.landing && !site.sessionCookie) {
+    rules.push({
+      id: ruleId++,
+      priority: PRIORITY.landing,
+      action: { type: 'redirect', redirect: { transform: { path: site.landing } } },
+      condition: condition(urlRegex(site.hosts, '/?')),
+    })
+  }
+
   // 3. ...and `deny` wins back over a broad allow (e.g. /:username also
   //    matching /explore).
   for (const pattern of site.deny ?? []) {
@@ -108,6 +119,7 @@ for (const site of sites) {
       pruneNav: site.pruneNav ?? null,
       contexts: site.contexts ?? {},
       always: site.always ?? [],
+      sessionCookie: site.sessionCookie ?? null,
     }
   }
 }

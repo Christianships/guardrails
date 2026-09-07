@@ -43,16 +43,20 @@
   // Instagram sets ds_user_id without httpOnly, so it is readable here. It is
   // the cheapest reliable "is there a session" signal; sessionid is httpOnly
   // and invisible to us.
-  const loggedIn = () => /(^|;\s*)ds_user_id=/.test(document.cookie)
+  const loggedIn = () =>
+    !site.sessionCookie ||
+    new RegExp(`(^|;\\s*)${site.sessionCookie}=`).test(document.cookie)
 
   function verdict(path) {
     // Auth first, ahead of every other rule. Redirecting a logged-out visitor
     // to a profile page bounces them into a login wall they cannot clear, and
     // blocking /challenge means two-factor can never complete.
     if (always.some((re) => re.test(path))) return 'allow'
-    if (deny.some((re) => re.test(path))) return 'block'
+    // landing is checked before deny: the root is usually the feed, so it
+    // appears in both, and the redirect has to win.
     if (site.landing && (path === '/' || path === ''))
       return loggedIn() ? 'landing' : 'allow'
+    if (deny.some((re) => re.test(path))) return 'block'
     if (allow.some((re) => re.test(path))) return 'allow'
     const gated = allowFrom.find((entry) => entry.match.test(path))
     if (gated) return readContext() === gated.from ? 'allow' : 'block'
