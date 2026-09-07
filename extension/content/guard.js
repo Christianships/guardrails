@@ -90,27 +90,27 @@
   enforce()
 
   // --- the left rail ------------------------------------------------------
-  // Instagram's class names are obfuscated and rotate between builds, so items
-  // are matched on accessible name -- the one handle that stays stable because
-  // screen readers depend on it.
+  // Instagram's rail is plain <div>s with obfuscated, rotating class names, so
+  // there is no container to scope to. The one durable handle is the aria-label
+  // on each item's <svg>, which survives redesigns because screen readers
+  // depend on it.
   if (site.pruneNav) {
-    const { container, keep } = site.pruneNav
-    const label = (el) =>
-      (el.getAttribute('aria-label') || el.textContent || '').trim()
+    const remove = new Set(site.pruneNav.remove)
 
     const prune = () => {
-      for (const nav of document.querySelectorAll(container)) {
-        for (const item of nav.querySelectorAll('a[href], [role="link"], [role="button"]')) {
-          const name = label(item)
-          if (!name || keep.some((k) => name.startsWith(k))) continue
-          const row = item.closest('li') ?? item
-          row.style.setProperty('display', 'none', 'important')
-        }
+      for (const icon of document.querySelectorAll('svg[aria-label]')) {
+        if (!remove.has(icon.getAttribute('aria-label'))) continue
+        // Each rail item is wrapped in a span[aria-describedby]; hiding that
+        // takes the row's spacing with it instead of leaving a gap.
+        const item =
+          icon.closest('span[aria-describedby]') ?? icon.closest('a') ?? icon
+        item.style.setProperty('display', 'none', 'important')
       }
     }
 
-    // The rail is rendered after hydration and re-rendered on navigation, so a
-    // one-shot pass would miss it.
+    // The rail renders after hydration and re-renders on navigation, so a
+    // one-shot pass misses it. Observing childList only -- not attributes --
+    // keeps our own style writes from retriggering the observer.
     new MutationObserver(prune).observe(document.documentElement, {
       childList: true,
       subtree: true,

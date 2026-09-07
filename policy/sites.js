@@ -94,9 +94,25 @@ export const sites = [
     // The left rail keeps only these. Matched against each item's accessible
     // name, because Instagram's class names are obfuscated and rotate --
     // labels are the only stable handle.
+    // Named by the `aria-label` on each item's <svg>, which is the only stable
+    // handle: the rail is plain <div>s (no <nav>), and every class name is
+    // obfuscated and rotates between builds.
+    //
+    // A remove-list, not a keep-list. Keep-lists have to hide "everything
+    // unrecognised", and a selector that drifts then blanks the whole page.
+    // A remove-list fails safe: at worst an item survives.
     pruneNav: {
-      container: 'nav, [role="navigation"]',
-      keep: ['Notifications', 'Create', 'Profile'],
+      remove: [
+        'Instagram',      // wordmark at the top of the rail
+        'Home',
+        'Search',         // this item's href is actually /explore/
+        'Explore',
+        'Reels',
+        'Messages',       // also kills the floating chat bubble
+        'Threads',
+        'Settings',       // the "More" hamburger
+        'Also from Meta',
+      ],
     },
 
     hide: [],
