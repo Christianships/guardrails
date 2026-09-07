@@ -16,7 +16,14 @@ set -euo pipefail
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 ID="$(cat "$REPO/dist/extension-id.txt")"
 DEST="/Library/Application Support/Guardrails"
-EXTERNAL="/Library/Application Support/Helium/External Extensions"
+# Helium derives its per-user data dir from its bundle id (net.imput.helium)
+# but its GLOBAL Application Support dir is still "Chromium" -- confirmed by
+# strings in the framework binary. Write all three candidates; extras are inert.
+EXTERNAL_DIRS=(
+  "/Library/Application Support/Chromium/External Extensions"
+  "/Library/Application Support/Helium/External Extensions"
+  "/Library/Application Support/net.imput.helium/External Extensions"
+)
 VERSION="$(python3 -c "import json;print(json.load(open('$REPO/extension/manifest.json'))['version'])")"
 
 echo "==> building"
@@ -31,7 +38,7 @@ sudo -u "$SUDO_USER" "/Applications/Helium.app/Contents/MacOS/Helium" \
 mv -f "$REPO/extension.crx" "$REPO/dist/guardrails.crx"
 
 echo "==> staging into $DEST (root-owned)"
-mkdir -p "$DEST" "$EXTERNAL"
+mkdir -p "$DEST" "${EXTERNAL_DIRS[@]}"
 install -m 644 -o root -g wheel "$REPO/dist/guardrails.crx" "$DEST/guardrails.crx"
 
 # codebase must be a URL, so the space in "Application Support" is escaped
@@ -45,13 +52,15 @@ cat > "$DEST/update.xml" <<XML
 XML
 chown root:wheel "$DEST/update.xml"; chmod 644 "$DEST/update.xml"
 
-cat > "$EXTERNAL/$ID.json" <<JSON
+for dir in "${EXTERNAL_DIRS[@]}"; do
+  cat > "$dir/$ID.json" <<JSON
 {
   "external_crx": "$DEST/guardrails.crx",
   "external_version": "$VERSION"
 }
 JSON
-chown root:wheel "$EXTERNAL/$ID.json"; chmod 644 "$EXTERNAL/$ID.json"
+  chown root:wheel "$dir/$ID.json"; chmod 644 "$dir/$ID.json"
+done
 
 echo
 echo "Staged. Two steps left, both yours:"

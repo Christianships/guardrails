@@ -44,6 +44,10 @@ const payload = {
       toolbar_pin: 'force_pinned',
     },
   },
+  // Belt and braces. Where both are set ExtensionSettings wins, so this is
+  // inert on builds that honour it and a safety net on builds that only read
+  // the older policy.
+  ExtensionInstallForcelist: [`${id};${updateUrl}`],
 }
 
 const profile = {

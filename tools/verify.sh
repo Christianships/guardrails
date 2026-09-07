@@ -10,10 +10,14 @@ echo "Guardrails ($ID)"
 check "profile delivered policy to managed prefs" \
   "grep -qa ExtensionSettings '/Library/Managed Preferences/$USER/complete.plist'"
 check "external manifest staged" \
-  "test -f '/Library/Application Support/Helium/External Extensions/$ID.json'"
+  "ls '/Library/Application Support/'*'/External Extensions/$ID.json'"
 check "crx staged root-owned" \
   "test -O '/Library/Application Support/Guardrails/guardrails.crx' -o -f '/Library/Application Support/Guardrails/guardrails.crx'"
-check "extension present in Helium profile" "test -d '$PROFILE/Extensions/$ID'"
+# Policy is system-scoped, so this must hold for EVERY profile, not just Default.
+for dir in "$HOME/Library/Application Support/net.imput.helium"/*/; do
+  [[ -f "$dir/Preferences" ]] || continue
+  check "extension present in profile $(basename "$dir")" "test -d '$dir/Extensions/$ID'"
+done
 echo
 echo "Also open chrome://policy and chrome://extensions in Helium:"
 echo "  chrome://policy      ExtensionSettings should read Source: Platform, Level: Mandatory"
