@@ -17,6 +17,7 @@
   const anchored = (p) => new RegExp(`^${p}/?$`)
   const allow = site.allow.map(anchored)
   const deny = site.deny.map(anchored)
+  const always = site.always.map(anchored)
   const allowFrom = site.allowFrom.map((entry) => ({
     match: anchored(entry.pattern),
     from: entry.from,
@@ -39,9 +40,19 @@
     } catch { /* private mode; degrade to blocking allowFrom routes */ }
   }
 
+  // Instagram sets ds_user_id without httpOnly, so it is readable here. It is
+  // the cheapest reliable "is there a session" signal; sessionid is httpOnly
+  // and invisible to us.
+  const loggedIn = () => /(^|;\s*)ds_user_id=/.test(document.cookie)
+
   function verdict(path) {
+    // Auth first, ahead of every other rule. Redirecting a logged-out visitor
+    // to a profile page bounces them into a login wall they cannot clear, and
+    // blocking /challenge means two-factor can never complete.
+    if (always.some((re) => re.test(path))) return 'allow'
     if (deny.some((re) => re.test(path))) return 'block'
-    if (site.landing && (path === '/' || path === '')) return 'landing'
+    if (site.landing && (path === '/' || path === ''))
+      return loggedIn() ? 'landing' : 'allow'
     if (allow.some((re) => re.test(path))) return 'allow'
     const gated = allowFrom.find((entry) => entry.match.test(path))
     if (gated) return readContext() === gated.from ? 'allow' : 'block'

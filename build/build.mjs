@@ -33,7 +33,7 @@ function urlRegex(hosts, pathPattern) {
 
 // Higher wins. `allowFrom` routes get no rule here at all -- whether they
 // are permitted depends on where you came from, which only the guard knows.
-const PRIORITY = { catchAll: 1, allow: 2, landing: 3, deny: 4 }
+const PRIORITY = { catchAll: 1, allow: 2, landing: 3, deny: 4, always: 5 }
 
 const rules = []
 let ruleId = 1
@@ -67,17 +67,6 @@ for (const site of sites) {
     })
   }
 
-  // 2b. The site root is rewritten rather than blocked, so "check Instagram"
-  //     lands on a finite page instead of an interstitial.
-  if (site.landing) {
-    rules.push({
-      id: ruleId++,
-      priority: PRIORITY.landing,
-      action: { type: 'redirect', redirect: { transform: { path: site.landing } } },
-      condition: condition(urlRegex(site.hosts, '/?')),
-    })
-  }
-
   // 3. ...and `deny` wins back over a broad allow (e.g. /:username also
   //    matching /explore).
   for (const pattern of site.deny ?? []) {
@@ -85,6 +74,17 @@ for (const site of sites) {
       id: ruleId++,
       priority: PRIORITY.deny,
       action: redirect,
+      condition: condition(urlRegex(site.hosts, pattern)),
+    })
+  }
+
+  // 4. `always` outranks everything, including deny. Login and verification
+  //    flows must never be reachable-by-accident-only.
+  for (const pattern of site.always ?? []) {
+    rules.push({
+      id: ruleId++,
+      priority: PRIORITY.always,
+      action: { type: 'allow' },
       condition: condition(urlRegex(site.hosts, pattern)),
     })
   }
@@ -107,6 +107,7 @@ for (const site of sites) {
       landing: site.landing ?? null,
       pruneNav: site.pruneNav ?? null,
       contexts: site.contexts ?? {},
+      always: site.always ?? [],
     }
   }
 }

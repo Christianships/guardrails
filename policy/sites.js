@@ -52,48 +52,31 @@ export const sites = [
     label: 'Instagram',
     hosts: ['instagram.com', 'www.instagram.com'],
 
-    // Visiting instagram.com does not show a feed -- it shows you. The home
-    // route is rewritten to your own profile, so the reflex to "just check
-    // Instagram" lands somewhere finite.
+    // Visiting instagram.com lands on your own profile instead of the feed --
+    // but only once you are logged in. See `landing` handling in guard.js:
+    // redirecting a logged-out visitor to a profile bounces them into a login
+    // wall they can never clear.
     landing: '/christianships/',
 
-    allow: [
-      '/explore(/.*)?', // deliberately reachable, but see `pruneNav` below:
-                        // the sidebar link is removed, so the only way here is
-                        // to type the URL yourself.
-      '/[^/]+',         // anybody's profile page
-      '/[^/]+/(tagged|reels|saved)', // tabs within a profile
+    // Never blocked, never redirected, checked before anything else. Auth is
+    // not a surface you can doomscroll, and locking yourself out of your own
+    // login is the one failure mode that makes the whole thing unusable.
+    always: [
+      '/accounts/(login|logout|signup|password/reset|onetap|emailsignup)(/.*)?',
+      '/accounts/(two_factor|login/two_factor)(/.*)?',
+      '/challenge(/.*)?',
+      '/oauth(/.*)?',
+      '/api(/.*)?',
     ],
 
-    // Named navigation contexts. The guard records the most recent one you
-    // were in, and `allowFrom` reads it back.
-    contexts: {
-      // The negative lookahead matters: without it /explore matches "a profile"
-      // and silently becomes a gateway to unlimited posts, which is the exact
-      // thing the typed-URL-only rule exists to prevent.
-      profile:
-        '/(?!explore|reels?|p|stories|direct|accounts)[^/]+(/(tagged|reels|saved))?',
-    },
+    // Deliberately wide, at your request. The feed is handled by `landing`
+    // and the rail is pruned, so the pull surfaces are gone without every
+    // route needing to be enumerated up front.
+    allow: ['(/.*)?'],
 
-    // Routes allowed only when you arrived from somewhere specific. A post,
-    // reel or story is worth seeing when you opened it off a profile you chose
-    // to visit; the same URL reached from a feed is the thing being avoided.
-    allowFrom: [
-      { pattern: '/p/[^/]+', from: 'profile' },
-      { pattern: '/reel/[^/]+', from: 'profile' },
-      { pattern: '/stories/[^/]+(/.*)?', from: 'profile' },
-    ],
+    // deny outranks allow, so this survives the wide rule above.
+    deny: ['/reels(/.*)?'],
 
-    // deny outranks allow, so these survive the broad '/[^/]+' profile rule.
-    deny: [
-      '/reels(/.*)?',   // the Reels feed itself, as opposed to a single reel
-      '/direct(/.*)?',
-      '/accounts/activity(/.*)?',
-    ],
-
-    // The left rail keeps only these. Matched against each item's accessible
-    // name, because Instagram's class names are obfuscated and rotate --
-    // labels are the only stable handle.
     // Named by the `aria-label` on each item's <svg>, which is the only stable
     // handle: the rail is plain <div>s (no <nav>), and every class name is
     // obfuscated and rotates between builds.
@@ -118,10 +101,11 @@ export const sites = [
     hide: [],
 
     note:
-      'Home feed and the Reels feed are gone; Explore survives only by typed ' +
-      'URL. Posts/reels/stories are gated on arriving from a profile, which ' +
-      'is what makes "look at one person" possible without reopening an ' +
-      'infinite surface. DMs are currently denied -- revisit if that bites.',
+      'Loosened from a route allowlist to allow-everything-but-Reels, because ' +
+      'the strict version blocked login and verification flows. The friction ' +
+      'now comes from the landing redirect and the pruned rail rather than ' +
+      'from blocking routes. The `allowFrom` machinery still exists in the ' +
+      'builder if you want to re-gate posts to "only from a profile" later.',
   },
 ]
 
