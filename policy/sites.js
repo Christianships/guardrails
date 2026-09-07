@@ -55,7 +55,7 @@ export const sites = [
     // Visiting instagram.com does not show a feed -- it shows you. The home
     // route is rewritten to your own profile, so the reflex to "just check
     // Instagram" lands somewhere finite.
-    landing: '/__YOUR_USERNAME__/',
+    landing: '/christianships/',
 
     allow: [
       '/explore(/.*)?', // deliberately reachable, but see `pruneNav` below:
@@ -68,7 +68,11 @@ export const sites = [
     // Named navigation contexts. The guard records the most recent one you
     // were in, and `allowFrom` reads it back.
     contexts: {
-      profile: '/[^/]+(/(tagged|reels|saved))?',
+      // The negative lookahead matters: without it /explore matches "a profile"
+      // and silently becomes a gateway to unlimited posts, which is the exact
+      // thing the typed-URL-only rule exists to prevent.
+      profile:
+        '/(?!explore|reels?|p|stories|direct|accounts)[^/]+(/(tagged|reels|saved))?',
     },
 
     // Routes allowed only when you arrived from somewhere specific. A post,
