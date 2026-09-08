@@ -167,28 +167,51 @@ export const sites = [
     loginUrl: 'https://x.com/i/flow/login',
     label: 'X',
     hosts: ['x.com', 'www.x.com', 'twitter.com', 'www.twitter.com'],
-    landing: '/notifications',
+    landing: '/christianships_',
     always: [
       '/login(/.*)?', '/logout(/.*)?', '/i/flow(/.*)?',
       '/account(/.*)?', '/oauth(/.*)?',
     ],
     allow: [
       '/search',
+      '/explore(/.*)?',       // kept: this is the search surface here
       '/notifications(/.*)?',
-      '/messages(/.*)?',
-      '/compose(/.*)?',
-      '/[^/]+',                    // profiles
+      '/i/history(/.*)?',
+      '/compose(/.*)?',       // posting stays open
+      '/[^/]+',               // profiles
       '/[^/]+/status/[0-9]+',
     ],
-    deny: ['/', '/home', '/explore(/.*)?', '/i/trending(/.*)?', '/i/timeline(/.*)?'],
+    deny: [
+      '/',
+      '/home',                // the algorithmic timeline
+      '/i/trending(/.*)?',
+      '/i/chat(/.*)?',
+      '/i/grok(/.*)?',
+      '/i/jf/creators/studio(/.*)?',
+      '/i/premium_sign_up(/.*)?',
+    ],
+    // X puts the accessible name on the <a>, not on the <svg> (its icons are
+    // aria-hidden), which is why the pruner reads both.
+    pruneNav: {
+      remove: [
+        'X',                  // the wordmark, which links to /home
+        'Home',
+        'Direct Messages',
+        'Grok',
+        'Creator Studio',
+        'Premium',
+      ],
+    },
     hide: [
       '[data-testid="sidebarColumn"]',      // Trends and Who to follow
       '[aria-label="Timeline: Trending now"]',
     ],
     note:
-      'The reply timeline under a status is itself infinite, but removing it ' +
-      'breaks reading a thread, so it stays. Trends and Who-to-follow are the ' +
-      'discovery surfaces and both go.',
+      'Rail keeps Profile, Explore, Notifications, History, Post and More. ' +
+      'Explore is allowed here because on X it is the search surface, unlike ' +
+      'Instagram where /explore is a discover grid. The reply timeline under ' +
+      'a status is infinite but stays, since removing it breaks reading a ' +
+      'thread. Backing out of a post hits /home, which bounces to your profile.',
   },
 
   {

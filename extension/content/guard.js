@@ -119,12 +119,15 @@
     const remove = new Set(site.pruneNav.remove)
 
     const prune = () => {
-      for (const icon of document.querySelectorAll('svg[aria-label]')) {
-        if (!remove.has(icon.getAttribute('aria-label'))) continue
-        // Each rail item is wrapped in a span[aria-describedby]; hiding that
-        // takes the row's spacing with it instead of leaving a gap.
+      // Instagram labels the <svg>; X labels the <a> and marks its icons
+      // aria-hidden. Reading both covers either shape.
+      const labelled = 'a[aria-label], button[aria-label], svg[aria-label]'
+      for (const el of document.querySelectorAll(labelled)) {
+        if (!remove.has(el.getAttribute('aria-label'))) continue
+        // Instagram wraps each rail item in a span[aria-describedby]; hiding
+        // that takes the row's spacing with it instead of leaving a gap.
         const item =
-          icon.closest('span[aria-describedby]') ?? icon.closest('a') ?? icon
+          el.closest('span[aria-describedby]') ?? el.closest('a, button') ?? el
         item.style.setProperty('display', 'none', 'important')
       }
     }
