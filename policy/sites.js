@@ -200,6 +200,7 @@ export const sites = [
       '/notifications(/.*)?',
       '/i/history(/.*)?',
       '/compose(/.*)?',       // posting stays open
+      '/i/grok(/.*)?',        // kept: a tool, not a feed
       '/[^/]+',               // profiles
       '/[^/]+/status/[0-9]+',
     ],
@@ -208,7 +209,6 @@ export const sites = [
       '/home',                // the algorithmic timeline
       '/i/trending(/.*)?',
       '/i/chat(/.*)?',
-      '/i/grok(/.*)?',
       '/i/jf/creators/studio(/.*)?',
       '/i/premium_sign_up(/.*)?',
     ],
@@ -219,7 +219,6 @@ export const sites = [
         'X',                  // the wordmark, which links to /home
         'Home',
         'Direct Messages',
-        'Grok',
         'Creator Studio',
         'Premium',
       ],
