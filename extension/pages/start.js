@@ -91,10 +91,10 @@ for (const category of categories) {
   const more = control('more', { text: 'More' })
   head.append(left, right, more)
 
+  // A page is exactly the six visible tiles, so every stop lands on a tile
+  // boundary and nothing is ever cut in half.
   const page = (direction) => {
-    // Scroll by whole tiles so a row never stops mid-icon.
-    const step = Math.max(1, Math.floor(grid.clientWidth / 88)) * 88
-    grid.scrollBy({ left: direction * step })
+    grid.scrollBy({ left: direction * grid.clientWidth })
   }
   left.addEventListener('click', () => page(-1))
   right.addEventListener('click', () => page(1))

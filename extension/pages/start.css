@@ -39,8 +39,10 @@ main {
 
 #q {
   width: 100%;
-  padding: 1.5rem 4.75rem 1.5rem 1.75rem;
-  font: 600 2rem/1.15 inherit;
+  /* Padding is tight relative to the type so the text fills the field rather
+     than floating in the middle of it. */
+  padding: 0.95rem 4.75rem 0.95rem 1.6rem;
+  font: 600 2.75rem/1.2 inherit;
   letter-spacing: -0.02em;
   color: inherit;
   background: color-mix(in srgb, CanvasText 4%, Canvas);
@@ -119,13 +121,17 @@ main {
 .ctl svg { width: 16px; height: 16px; fill: none; stroke: currentColor;
   stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
 
-/* Collapsed: one row that scrolls sideways. Expanded: wraps into rows and the
-   arrows retire, which is the "more rows instead of scrolling" behaviour. */
+/* Exactly six tiles per view. Columns are a fraction of the row rather than a
+   fixed pixel width, so six always fill the width edge to edge and a seventh
+   is never half-visible. Expanded keeps the same six-column rhythm and simply
+   wraps, so tiles do not resize when you toggle it. */
 .tiles {
+  --per-row: 6;
+  --gap: 0.25rem;
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: 84px;
-  gap: 0.25rem;
+  grid-auto-columns: calc((100% - (var(--per-row) - 1) * var(--gap)) / var(--per-row));
+  gap: var(--gap);
   overflow-x: auto;
   scroll-behavior: smooth;
   scrollbar-width: none;
@@ -135,7 +141,7 @@ main {
 
 .tiles.expanded {
   grid-auto-flow: row;
-  grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+  grid-template-columns: repeat(var(--per-row), 1fr);
   overflow-x: visible;
 }
 
