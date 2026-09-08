@@ -4,6 +4,9 @@
   "version": "1.0.0",
   "description": "Route allowlist for sites that are otherwise infinite.",
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnsLtN5u3B1NE+Sgi6f8qdDt52b3ha3c/P3mn8Q8ExKwyEnjD33Ojez5xMrEGHCWZgg3nANkUMWPpkfHzx4biy7LuHVWSVE2jQeVS/yIy5CdBWzqifoAY6pdUe1NsUflOVpURccK9p8zjliJPTuFBnM5TZ7wJ6IknIYLW6GeiwSSDfYsKzwLyYRhMFk0adC1ipNWHzbTk68EaxoECa3fRkSsxL9u5kQMdGGCW3uN/lfL/alQWTzHIVC6Eb1GCnZLAWT/tiCsiCqzhL1FrJlplBQtkKvFu50vBoFYvbfFZMdXQ5KC7XqP59dZCZIlqrvF11vz+0zanOlzzJi0+lPcN+QIDAQAB",
+  "chrome_url_overrides": {
+    "newtab": "pages/start.html"
+  },
   "permissions": [
     "declarativeNetRequest"
   ],

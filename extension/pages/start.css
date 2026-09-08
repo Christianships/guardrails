@@ -1,0 +1,111 @@
+/* Deliberately one small stylesheet with no framework: this page renders on
+   every Cmd-T, so anything that has to be fetched or parsed first would be
+   felt fifty times a day. */
+:root {
+  color-scheme: light dark;
+  --edge: color-mix(in srgb, CanvasText 14%, transparent);
+  --muted: color-mix(in srgb, CanvasText 55%, transparent);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: Canvas;
+  color: CanvasText;
+  font: 400 16px/1.5 ui-sans-serif, -apple-system, system-ui, sans-serif;
+}
+
+main {
+  width: min(680px, 90vw);
+  display: grid;
+  gap: 3rem;
+  padding: 4rem 0;
+}
+
+/* --- search --- */
+#search { position: relative; }
+
+#q {
+  width: 100%;
+  padding: 1.15rem 3.5rem 1.15rem 1.5rem;
+  font: 500 1.25rem/1 inherit;
+  color: inherit;
+  background: transparent;
+  border: 2px solid CanvasText;
+  border-radius: 999px;
+  outline-offset: 3px;
+}
+#q::-webkit-search-cancel-button { display: none; }
+#q::placeholder { color: var(--muted); }
+
+#search svg {
+  position: absolute;
+  right: 1.4rem;
+  top: 50%;
+  translate: 0 -50%;
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: CanvasText;
+  stroke-width: 2.25;
+  stroke-linecap: round;
+  pointer-events: none;
+}
+
+/* --- categories --- */
+#categories { display: grid; gap: 2rem; }
+
+h2 {
+  margin: 0 0 0.85rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+  gap: 0.5rem;
+}
+
+.tile {
+  display: grid;
+  justify-items: center;
+  gap: 0.5rem;
+  padding: 0.9rem 0.5rem;
+  border-radius: 0.85rem;
+  text-decoration: none;
+  color: inherit;
+  border: 1px solid transparent;
+}
+.tile:hover { background: color-mix(in srgb, CanvasText 6%, transparent); }
+.tile:focus-visible { border-color: var(--edge); outline: none; }
+
+/* The placeholder state: an initial on a brand-coloured square, swapped for a
+   real icon one tile at a time by setting `icon` in policy/links.js. */
+.glyph {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 0.7rem;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #fff;
+  background: var(--tile-color, #888);
+}
+.glyph img { width: 100%; height: 100%; border-radius: inherit; }
+
+.label {
+  font-size: 0.75rem;
+  text-align: center;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
