@@ -1,7 +1,10 @@
 /* One small stylesheet, no framework: this paints on every Cmd-T, so anything
    that had to be fetched or parsed first would be felt fifty times a day. */
 :root {
-  color-scheme: light dark;
+  /* Pinned dark rather than "light dark": the background is a dark texture, so
+     following the system into light mode would put dark text on it. Pinning it
+     also means every color-mix below resolves against the right base. */
+  color-scheme: dark;
   --ink: CanvasText;
   --muted: color-mix(in srgb, CanvasText 50%, transparent);
   --hover: color-mix(in srgb, CanvasText 7%, transparent);
@@ -14,8 +17,19 @@ body {
   min-height: 100vh;
   display: grid;
   place-items: center;
-  background: Canvas;
   color: var(--ink);
+  /* The source is 214x120, so it is scaled up hard. `pixelated` makes that a
+     deliberate chunky texture instead of a blurry one -- and matches the
+     pixel-art search glyph. The gradient is a scrim: the texture is busy, and
+     small labels need something flat to sit against. */
+  background:
+    linear-gradient(
+      color-mix(in srgb, #120b06 62%, transparent),
+      color-mix(in srgb, #120b06 78%, transparent)
+    ),
+    url('../images/bg.webp') center / cover no-repeat fixed,
+    #23170e;
+  image-rendering: pixelated;
   font: 400 16px/1.5 ui-sans-serif, -apple-system, system-ui, sans-serif;
 }
 
@@ -45,13 +59,14 @@ main {
   /* Bitmap font: it has one true size and integer multiples of it, so the
      size is set in px rather than rem to avoid landing between pixel steps. */
   font-family: 'GohuFont 14 Nerd Font Mono', ui-monospace, monospace;
-  font-size: 42px;
+  font-size: 36px;
   font-weight: 600;
   line-height: 1.15;
   letter-spacing: -0.02em;
   color: inherit;
-  background: color-mix(in srgb, CanvasText 4%, Canvas);
-  border: 1px solid color-mix(in srgb, CanvasText 9%, transparent);
+  background: color-mix(in srgb, #0d0805 58%, transparent);
+  backdrop-filter: blur(10px) saturate(120%);
+  border: 1px solid color-mix(in srgb, CanvasText 14%, transparent);
   border-radius: 1.6rem;
   outline: none;
   box-shadow:
@@ -162,7 +177,7 @@ main {
   color: inherit;
   scroll-snap-align: start;
 }
-.tile:hover { background: var(--hover); }
+.tile:hover { background: color-mix(in srgb, CanvasText 12%, transparent); }
 .tile:focus-visible { outline: 2px solid var(--ink); outline-offset: -2px; }
 
 .glyph {
@@ -186,7 +201,8 @@ main {
   max-width: 100%;
   font-size: 0.75rem;
   text-align: center;
-  color: var(--muted);
+  color: color-mix(in srgb, CanvasText 72%, transparent);
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.55);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
