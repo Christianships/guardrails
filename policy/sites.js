@@ -247,6 +247,40 @@ export const sites = [
   },
 
   {
+    id: 'linkedin',
+    loginUrl: 'https://www.linkedin.com/login',
+    label: 'LinkedIn',
+    hosts: ['linkedin.com', 'www.linkedin.com'],
+    landing: '/in/caguilar0/',
+    always: [
+      '/login(/.*)?', '/logout(/.*)?', '/uas/login(/.*)?',
+      '/checkpoint(/.*)?', '/psettings(/.*)?',
+    ],
+    allow: [
+      '/in/[^/]+(/.*)?',              // profiles, including your own
+      '/search/.*',
+      '/notifications(/.*)?',
+      '/messaging(/.*)?',
+      '/posts/[^/]+(/.*)?',           // a single post someone linked you
+      '/feed/update/[^/]+(/.*)?',     // the permalink form of the same thing
+      '/company/[^/]+(/.*)?',
+      '/jobs(/.*)?',
+    ],
+    // '/feed' is anchored, so it matches /feed and /feed/ but NOT
+    // /feed/update/<id> -- a single post permalink stays reachable.
+    deny: ['/', '/feed', '/mynetwork(/.*)?', '/games(/.*)?'],
+    hide: [
+      '.scaffold-finite-scroll',      // the infinite feed container itself
+      '.feed-shared-update-v2',
+      '#msg-overlay',                 // the persistent messaging dock
+    ],
+    note:
+      'LinkedIn is a posting tool here, not a reading one. /feed is the ' +
+      'algorithmic home and is denied, but /feed/update/<id> is a permalink ' +
+      'to one post and stays allowed -- hence the exact-match deny.',
+  },
+
+  {
     id: 'reddit',
     loginUrl: 'https://www.reddit.com/login',
     label: 'Reddit',
