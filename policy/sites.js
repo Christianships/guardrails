@@ -284,22 +284,28 @@ export const sites = [
       '/notifications(/.*)?',
       '/messaging(/.*)?',
       '/posts/[^/]+(/.*)?',           // a single post someone linked you
-      '/feed/update/[^/]+(/.*)?',     // the permalink form of the same thing
+      '/feed(/.*)?',                  // reachable, but only by typing it: the
+                                      // Home button is removed from the nav
+      '/mynetwork(/.*)?',
       '/company/[^/]+(/.*)?',
       '/jobs(/.*)?',
     ],
-    // '/feed' is anchored, so it matches /feed and /feed/ but NOT
-    // /feed/update/<id> -- a single post permalink stays reachable.
-    deny: ['/', '/feed', '/mynetwork(/.*)?', '/games(/.*)?'],
+    deny: ['/', '/games(/.*)?'],
+
+    // Only Home goes. LinkedIn bakes notification counts into the label
+    // ("Home, 1 new notification"), so these are matched as a prefix.
+    pruneNav: {
+      remove: ['Home'],
+    },
+
     hide: [
-      '.scaffold-finite-scroll',      // the infinite feed container itself
-      '.feed-shared-update-v2',
       '#msg-overlay',                 // the persistent messaging dock
     ],
     note:
-      'LinkedIn is a posting tool here, not a reading one. /feed is the ' +
-      'algorithmic home and is denied, but /feed/update/<id> is a permalink ' +
-      'to one post and stays allowed -- hence the exact-match deny.',
+      'The feed is allowed but unreachable by clicking -- the Home button is ' +
+      'pruned from the nav, so getting there means typing the URL. Same ' +
+      'shape as Explore on Instagram: intent is the price of entry. The ' +
+      'root still redirects to your profile, so the reflex visit lands there.',
   },
 
   {

@@ -160,8 +160,15 @@
       // Instagram labels the <svg>; X labels the <a> and marks its icons
       // aria-hidden. Reading both covers either shape.
       const labelled = 'a[aria-label], button[aria-label], svg[aria-label]'
+      // LinkedIn appends counts to its labels ("Home, 1 new notification"), so
+      // an exact match never fires there. The comma is required rather than a
+      // bare prefix so that "Home" cannot also swallow a "Homepage" item.
+      const matches = (label) =>
+        label != null &&
+        [...remove].some((name) => label === name || label.startsWith(`${name},`))
+
       for (const el of document.querySelectorAll(labelled)) {
-        if (!remove.has(el.getAttribute('aria-label'))) continue
+        if (!matches(el.getAttribute('aria-label'))) continue
         // Instagram wraps each rail item in a span[aria-describedby]; hiding
         // that takes the row's spacing with it instead of leaving a gap.
         const item =
