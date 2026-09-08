@@ -1,10 +1,10 @@
-/* Deliberately one small stylesheet with no framework: this page renders on
-   every Cmd-T, so anything that has to be fetched or parsed first would be
-   felt fifty times a day. */
+/* One small stylesheet, no framework: this paints on every Cmd-T, so anything
+   that had to be fetched or parsed first would be felt fifty times a day. */
 :root {
   color-scheme: light dark;
-  --edge: color-mix(in srgb, CanvasText 14%, transparent);
-  --muted: color-mix(in srgb, CanvasText 55%, transparent);
+  --ink: CanvasText;
+  --muted: color-mix(in srgb, CanvasText 50%, transparent);
+  --hover: color-mix(in srgb, CanvasText 7%, transparent);
 }
 
 * { box-sizing: border-box; }
@@ -15,97 +15,146 @@ body {
   display: grid;
   place-items: center;
   background: Canvas;
-  color: CanvasText;
+  color: var(--ink);
   font: 400 16px/1.5 ui-sans-serif, -apple-system, system-ui, sans-serif;
 }
 
 main {
-  width: min(680px, 90vw);
+  width: min(720px, 92vw);
   display: grid;
-  gap: 3rem;
-  padding: 4rem 0;
+  gap: 2.5rem;
+  padding: 3rem 0;
 }
 
-/* --- search --- */
+/* --- search: rounded rectangle, heavy outline --- */
 #search { position: relative; }
 
 #q {
   width: 100%;
-  padding: 1.15rem 3.5rem 1.15rem 1.5rem;
-  font: 500 1.25rem/1 inherit;
+  padding: 1.25rem 4.25rem 1.25rem 1.6rem;
+  font: 500 1.4rem/1 inherit;
   color: inherit;
   background: transparent;
-  border: 2px solid CanvasText;
-  border-radius: 999px;
-  outline-offset: 3px;
+  border: 3px solid var(--ink);
+  border-radius: 1.1rem;
+  outline-offset: 4px;
 }
 #q::-webkit-search-cancel-button { display: none; }
 #q::placeholder { color: var(--muted); }
 
-#search svg {
+.lens {
   position: absolute;
-  right: 1.4rem;
+  right: 1.1rem;
   top: 50%;
   translate: 0 -50%;
-  width: 22px;
-  height: 22px;
-  fill: none;
-  stroke: CanvasText;
-  stroke-width: 2.25;
-  stroke-linecap: round;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
   pointer-events: none;
 }
+.lens svg {
+  width: 30px;
+  height: 30px;
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+}
+.lens circle { fill: color-mix(in srgb, CanvasText 22%, transparent); }
 
 /* --- categories --- */
-#categories { display: grid; gap: 2rem; }
+#categories { display: grid; gap: 1.75rem; }
 
-h2 {
-  margin: 0 0 0.85rem;
-  font-size: 0.9375rem;
+.head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.6rem;
+}
+.head h2 {
+  margin: 0;
+  flex: 1;
+  font-size: 1rem;
   font-weight: 600;
   color: var(--muted);
 }
 
+.ctl {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  font: 600 0.75rem/1 inherit;
+}
+.ctl:hover:not(:disabled) { background: var(--hover); }
+.ctl:disabled { opacity: 0.25; cursor: default; }
+.ctl.more { width: auto; padding: 0 0.6rem; color: var(--muted); }
+.ctl svg { width: 16px; height: 16px; fill: none; stroke: currentColor;
+  stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Collapsed: one row that scrolls sideways. Expanded: wraps into rows and the
+   arrows retire, which is the "more rows instead of scrolling" behaviour. */
 .tiles {
   display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 84px;
+  gap: 0.25rem;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  scroll-snap-type: x proximity;
+}
+.tiles::-webkit-scrollbar { display: none; }
+
+.tiles.expanded {
+  grid-auto-flow: row;
   grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
-  gap: 0.5rem;
+  overflow-x: visible;
 }
 
 .tile {
   display: grid;
   justify-items: center;
   gap: 0.5rem;
-  padding: 0.9rem 0.5rem;
-  border-radius: 0.85rem;
+  padding: 0.85rem 0.4rem;
+  border-radius: 0.9rem;
   text-decoration: none;
   color: inherit;
-  border: 1px solid transparent;
+  scroll-snap-align: start;
 }
-.tile:hover { background: color-mix(in srgb, CanvasText 6%, transparent); }
-.tile:focus-visible { border-color: var(--edge); outline: none; }
+.tile:hover { background: var(--hover); }
+.tile:focus-visible { outline: 2px solid var(--ink); outline-offset: -2px; }
 
-/* The placeholder state: an initial on a brand-coloured square, swapped for a
-   real icon one tile at a time by setting `icon` in policy/links.js. */
 .glyph {
-  width: 44px;
-  height: 44px;
+  width: 46px;
+  height: 46px;
   display: grid;
   place-items: center;
-  border-radius: 0.7rem;
-  font-size: 1.15rem;
+  border-radius: 0.8rem;
+  overflow: hidden;
+  font-size: 1.1rem;
   font-weight: 600;
   color: #fff;
-  background: var(--tile-color, #888);
+  background: var(--tile-color, #8a8a8a);
 }
-.glyph img { width: 100%; height: 100%; border-radius: inherit; }
+/* Icons sit on their own white plate: many brand marks are dark-on-transparent
+   and vanish outright in dark mode. */
+.glyph.has-icon { background: #fff; padding: 6px; }
+.glyph img { width: 100%; height: 100%; object-fit: contain; }
 
 .label {
+  max-width: 100%;
   font-size: 0.75rem;
   text-align: center;
   color: var(--muted);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: 100%;
 }

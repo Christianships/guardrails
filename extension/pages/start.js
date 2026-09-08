@@ -1,5 +1,5 @@
-// Renders the start page from generated/start-data.js. Kept to plain DOM calls
-// on purpose -- this runs on every new tab, so there is no framework to boot.
+// Renders the start page from generated/start-data.js. Plain DOM calls on
+// purpose -- this runs on every new tab, so there is no framework to boot.
 
 const { search, categories } = globalThis.START
 
@@ -15,23 +15,38 @@ document.getElementById('search').addEventListener('submit', (event) => {
   location.href = url.toString()
 })
 
-// A deterministic fallback so every tile has an identity before it has an icon.
+const ARROW = {
+  left: 'M15 4 7 12l8 8',
+  right: 'M9 4l8 8-8 8',
+}
+
+function control(className, { label, path, text } = {}) {
+  const button = document.createElement('button')
+  button.type = 'button'
+  button.className = `ctl ${className}`
+  if (label) button.setAttribute('aria-label', label)
+  if (text) button.textContent = text
+  if (path) {
+    button.innerHTML =
+      `<svg viewBox="0 0 24 24"><path d="${path}"/></svg>`
+  }
+  return button
+}
+
+// A deterministic identity for tiles whose icon download failed.
 const initials = (label) =>
-  label
-    .split(/[\s.]+/)
-    .slice(0, 2)
-    .map((word) => word[0])
-    .join('')
-    .toUpperCase()
+  label.split(/[\s.]+/).slice(0, 2).map((w) => w[0]).join('').toUpperCase()
 
 const container = document.getElementById('categories')
 
 for (const category of categories) {
   const section = document.createElement('section')
 
+  const head = document.createElement('div')
+  head.className = 'head'
   const heading = document.createElement('h2')
   heading.textContent = category.label
-  section.append(heading)
+  head.append(heading)
 
   const grid = document.createElement('div')
   grid.className = 'tiles'
@@ -44,14 +59,22 @@ for (const category of categories) {
 
     const glyph = document.createElement('span')
     glyph.className = 'glyph'
-    if (tile.color) glyph.style.setProperty('--tile-color', tile.color)
-
     if (tile.icon) {
+      glyph.classList.add('has-icon')
       const img = document.createElement('img')
       img.src = `../icons/${tile.icon}`
       img.alt = ''
+      img.loading = 'eager'
+      // If the file is missing or corrupt, fall back rather than show a
+      // broken-image box.
+      img.addEventListener('error', () => {
+        glyph.classList.remove('has-icon')
+        glyph.textContent = initials(tile.label)
+        if (tile.color) glyph.style.setProperty('--tile-color', tile.color)
+      })
       glyph.append(img)
     } else {
+      if (tile.color) glyph.style.setProperty('--tile-color', tile.color)
       glyph.textContent = initials(tile.label)
     }
 
@@ -63,6 +86,45 @@ for (const category of categories) {
     grid.append(link)
   }
 
-  section.append(grid)
+  const left = control('left', { label: `Scroll ${category.label} left`, path: ARROW.left })
+  const right = control('right', { label: `Scroll ${category.label} right`, path: ARROW.right })
+  const more = control('more', { text: 'More' })
+  head.append(left, right, more)
+
+  const page = (direction) => {
+    // Scroll by whole tiles so a row never stops mid-icon.
+    const step = Math.max(1, Math.floor(grid.clientWidth / 88)) * 88
+    grid.scrollBy({ left: direction * step })
+  }
+  left.addEventListener('click', () => page(-1))
+  right.addEventListener('click', () => page(1))
+
+  const syncArrows = () => {
+    const expanded = grid.classList.contains('expanded')
+    const overflowing = grid.scrollWidth > grid.clientWidth + 1
+    for (const button of [left, right]) button.hidden = expanded || !overflowing
+    if (expanded || !overflowing) return
+    left.disabled = grid.scrollLeft <= 0
+    right.disabled = grid.scrollLeft + grid.clientWidth >= grid.scrollWidth - 1
+  }
+
+  more.addEventListener('click', () => {
+    const expanded = grid.classList.toggle('expanded')
+    more.textContent = expanded ? 'Less' : 'More'
+    if (expanded) grid.scrollLeft = 0
+    syncArrows()
+  })
+
+  grid.addEventListener('scroll', syncArrows, { passive: true })
+  addEventListener('resize', syncArrows)
+
+  section.append(head, grid)
   container.append(section)
+
+  // After layout, so scrollWidth is real.
+  requestAnimationFrame(() => {
+    syncArrows()
+    // Nothing to expand if it already fits on one row.
+    more.hidden = grid.scrollWidth <= grid.clientWidth + 1
+  })
 }
