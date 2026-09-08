@@ -10,7 +10,7 @@
 import { writeFileSync, mkdirSync, existsSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
-import { categories } from '../policy/links.js'
+import { categories, extraSocials } from '../policy/links.js'
 import { sites } from '../policy/sites.js'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
@@ -53,8 +53,15 @@ function pickIcon(html, base) {
   return scored[0]?.href
 }
 
+// Sites whose own page does not expose a usable icon.
+const OVERRIDES = {
+  X: 'https://abs.twimg.com/favicons/twitter.3.ico',
+  npm: 'https://static-production.npmjs.com/58a19602036db1daee0d7863c94673a4.png',
+}
+
 const tiles = [
   ...categories.flatMap((c) => c.tiles),
+  ...extraSocials,
   ...sites.filter((s) => s.landing).map((s) => ({
     label: s.label,
     url: `https://${s.hosts.find((h) => h.startsWith('www.')) ?? s.hosts[0]}/`,
@@ -71,10 +78,12 @@ for (const tile of tiles) {
   if (existing) { map[name] = existing; console.log(`  cached  ${tile.label}`); continue }
 
   let saved = null
-  for (const attempt of ['page', 'favicon']) {
+  for (const attempt of OVERRIDES[tile.label] ? ['override'] : ['page', 'favicon']) {
     try {
       let href
-      if (attempt === 'page') {
+      if (attempt === 'override') {
+        href = OVERRIDES[tile.label]
+      } else if (attempt === 'page') {
         const { body } = await get(origin)
         href = pickIcon(body, origin)
         if (!href) continue
@@ -82,8 +91,12 @@ for (const tile of tiles) {
         href = `${origin}/favicon.ico`
       }
       const { body, type } = await get(href, 'buffer')
-      const ext = EXT[type.split(';')[0].trim()] ?? href.split('.').pop().split('?')[0]
-      if (!/^(svg|png|ico|jpg|webp)$/i.test(ext) || body.length < 64) continue
+      const mime = type.split(';')[0].trim().toLowerCase()
+      // Only the declared content-type decides the extension. Guessing from
+      // the URL once saved an HTML error page as "x.png".
+      const ext = EXT[mime]
+      if (!ext || !mime.startsWith('image/') || body.length < 64) continue
+      if (ext !== 'svg' && body.slice(0, 14).includes(Buffer.from('<'))) continue
       writeFileSync(join(iconDir, `${name}.${ext}`), body)
       saved = `${name}.${ext}`
       break

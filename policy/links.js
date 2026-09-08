@@ -36,9 +36,9 @@ export const categories = [
     tiles: [
       { label: 'Cloudflare', url: 'https://dash.cloudflare.com', color: '#f6821f' },
       { label: 'Neon', url: 'https://console.neon.tech', color: '#00e599' },
+      { label: 'Stripe', url: 'https://dashboard.stripe.com', color: '#635bff' },
       { label: 'Resend', url: 'https://resend.com/emails', color: '#000000' },
       { label: 'Mapbox', url: 'https://console.mapbox.com', color: '#4264fb' },
-      { label: 'Stripe', url: 'https://dashboard.stripe.com', color: '#635bff' },
       { label: 'Expo', url: 'https://expo.dev', color: '#000020' },
       { label: 'Solana', url: 'https://explorer.solana.com', color: '#9945ff' },
       { label: 'Figma', url: 'https://figma.com/files', color: '#f24e1e' },
@@ -49,3 +49,19 @@ export const categories = [
 ]
 
 export const socialsLabel = 'Socials'
+
+// Row order, by site id from policy/sites.js. Anything omitted here is
+// appended afterwards, so forgetting an id hides nothing.
+export const socialsOrder = [
+  'x', 'linkedin', 'instagram', 'tiktok', 'twitch',
+  'youtube', 'reddit', 'facebook', 'threads',
+]
+
+// Tiles for sites that are NOT governed by policy/sites.js -- they get a link
+// on the start page but no routing rules, no landing redirect and no pruning.
+// Pinterest in particular is an infinite feed and is currently unguarded.
+export const extraSocials = [
+  { label: 'Pinterest', url: 'https://www.pinterest.com', color: '#e60023' },
+  { label: 'Luma', url: 'https://lu.ma', color: '#111111' },
+  { label: 'Partiful', url: 'https://partiful.com', color: '#ffdc4d' },
+]

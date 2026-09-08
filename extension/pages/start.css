@@ -42,8 +42,10 @@ main {
   /* Padding is tight relative to the type so the text fills the field rather
      than floating in the middle of it. */
   padding: 1.15rem 4.5rem 1.15rem 1.75rem;
-  font-family: inherit;
-  font-size: 2.75rem;
+  /* Bitmap font: it has one true size and integer multiples of it, so the
+     size is set in px rather than rem to avoid landing between pixel steps. */
+  font-family: 'GohuFont 14 Nerd Font Mono', ui-monospace, monospace;
+  font-size: 42px;
   font-weight: 600;
   line-height: 1.15;
   letter-spacing: -0.02em;

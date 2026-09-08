@@ -17,7 +17,9 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 import { sites, INTERSTITIAL } from '../policy/sites.js'
-import { categories, search, socialsLabel } from '../policy/links.js'
+import {
+  categories, search, socialsLabel, socialsOrder, extraSocials,
+} from '../policy/links.js'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 const out = join(root, 'extension', 'generated')
@@ -206,17 +208,25 @@ const slug = (label) => label.toLowerCase().replace(/[^a-z0-9]+/g, '-')
 // so a missing download degrades to a placeholder rather than a broken image.
 const withIcon = (tile) => ({ ...tile, icon: iconMap[slug(tile.label)] ?? null })
 
+// Declared order first, anything unlisted after it, then the ungoverned extras.
+const rank = (id) => {
+  const i = socialsOrder.indexOf(id)
+  return i === -1 ? socialsOrder.length : i
+}
+
 const socials = {
   id: 'socials',
   label: socialsLabel,
   tiles: sites
     .filter((s) => s.landing)
+    .sort((a, b) => rank(a.id) - rank(b.id))
     .map((s) =>
       withIcon({
         label: s.label,
         url: `https://${s.hosts.find((h) => h.startsWith('www.')) ?? s.hosts[0]}${s.landing}`,
       }),
-    ),
+    )
+    .concat(extraSocials.map(withIcon)),
 }
 
 writeFileSync(
