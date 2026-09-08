@@ -66,9 +66,19 @@ export const sites = [
     },
 
     hide: [
-      'ytd-reel-shelf-renderer',             // Shorts shelf inside search
+      // Shorts inside search results. YouTube ships several generations of
+      // these components at once, so all of them are listed: the old shelf
+      // renderers, the newer lockup view-models, and -- via :has() -- any
+      // result row or section that turns out to contain a Short.
+      'ytd-reel-shelf-renderer',
       'ytd-rich-shelf-renderer[is-shorts]',
       'ytd-reel-item-renderer',
+      'grid-shelf-view-model',
+      'ytm-shorts-lockup-view-model',
+      'ytd-item-section-renderer:has(ytm-shorts-lockup-view-model)',
+      'ytd-rich-section-renderer:has(ytm-shorts-lockup-view-model)',
+      'ytd-video-renderer:has(a[href^="/shorts/"])',
+      'ytd-rich-item-renderer:has(a[href^="/shorts/"])',
       '#related',                            // up-next rail beside a video
       'ytd-compact-video-renderer',
       '.ytp-endscreen-content',              // end-of-video suggestion grid
