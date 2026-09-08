@@ -120,10 +120,11 @@ export const sites = [
     loginUrl: 'https://www.tiktok.com/login',
     label: 'TikTok',
     hosts: ['tiktok.com', 'www.tiktok.com'],
-    landing: null, // needs your @handle
+    landing: '/upload',
     always: ['/login(/.*)?', '/logout(/.*)?', '/signup(/.*)?', '/passport(/.*)?'],
     allow: [
       '/search(/.*)?',
+      '/upload(/.*)?',
       '/@[^/]+',
       '/@[^/]+/video/[^/]+',
     ],
@@ -166,7 +167,7 @@ export const sites = [
     loginUrl: 'https://x.com/i/flow/login',
     label: 'X',
     hosts: ['x.com', 'www.x.com', 'twitter.com', 'www.twitter.com'],
-    landing: null, // needs your @handle
+    landing: '/notifications',
     always: [
       '/login(/.*)?', '/logout(/.*)?', '/i/flow(/.*)?',
       '/account(/.*)?', '/oauth(/.*)?',
@@ -227,7 +228,7 @@ export const sites = [
     loginUrl: 'https://www.reddit.com/login',
     label: 'Reddit',
     hosts: ['reddit.com', 'www.reddit.com', 'old.reddit.com', 'np.reddit.com'],
-    landing: null, // needs your username
+    landing: '/user/me',
     always: ['/login(/.*)?', '/logout(/.*)?', '/register(/.*)?'],
     allow: [
       '/search(/.*)?',
