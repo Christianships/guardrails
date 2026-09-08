@@ -75,6 +75,9 @@ export const sites = [
       'ytd-reel-item-renderer',
       'grid-shelf-view-model',
       'ytm-shorts-lockup-view-model',
+      'ytm-shorts-lockup-view-model-v2',     // the outer wrapper; hiding only
+                                             // the inner one leaves its box
+      'ytd-item-section-renderer:has(grid-shelf-view-model)',
       'ytd-item-section-renderer:has(ytm-shorts-lockup-view-model)',
       'ytd-rich-section-renderer:has(ytm-shorts-lockup-view-model)',
       'ytd-video-renderer:has(a[href^="/shorts/"])',
