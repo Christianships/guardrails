@@ -33,7 +33,7 @@ main {
    point instead of becoming a full-width bar. */
 #search {
   position: relative;
-  width: min(78%, 34rem);
+  width: min(92%, 44rem);
   margin-inline: auto;
 }
 
@@ -41,13 +41,13 @@ main {
   width: 100%;
   /* Padding is tight relative to the type so the text fills the field rather
      than floating in the middle of it. */
-  padding: 0.95rem 4.75rem 0.95rem 1.6rem;
-  font: 600 2.75rem/1.2 inherit;
+  padding: 1.35rem 6rem 1.35rem 2rem;
+  font: 600 3.5rem/1.15 inherit;
   letter-spacing: -0.02em;
   color: inherit;
   background: color-mix(in srgb, CanvasText 4%, Canvas);
   border: 1px solid color-mix(in srgb, CanvasText 9%, transparent);
-  border-radius: 1.35rem;
+  border-radius: 1.6rem;
   outline: none;
   box-shadow:
     0 1px 2px color-mix(in srgb, CanvasText 8%, transparent),
@@ -66,21 +66,21 @@ main {
 
 .lens {
   position: absolute;
-  right: 1.35rem;
+  right: 1.6rem;
   top: 50%;
   translate: 0 -50%;
-  width: 42px;
-  height: 42px;
+  width: 54px;
+  height: 54px;
   display: grid;
   place-items: center;
   pointer-events: none;
 }
 .lens svg {
-  width: 28px;
-  height: 28px;
+  width: 36px;
+  height: 36px;
   fill: none;
   stroke: color-mix(in srgb, CanvasText 70%, transparent);
-  stroke-width: 2.25;
+  stroke-width: 2;
   stroke-linecap: round;
 }
 .lens circle { fill: color-mix(in srgb, CanvasText 12%, transparent); }

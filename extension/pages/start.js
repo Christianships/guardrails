@@ -89,7 +89,9 @@ for (const category of categories) {
   const left = control('left', { label: `Scroll ${category.label} left`, path: ARROW.left })
   const right = control('right', { label: `Scroll ${category.label} right`, path: ARROW.right })
   const more = control('more', { text: 'More' })
-  head.append(left, right, more)
+  // More sits left of the arrows: it changes the row's shape, so it reads as
+  // the mode switch that the arrows then operate within.
+  head.append(more, left, right)
 
   // A page is exactly the six visible tiles, so every stop lands on a tile
   // boundary and nothing is ever cut in half.
