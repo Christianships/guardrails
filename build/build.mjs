@@ -145,6 +145,7 @@ for (const site of sites) {
       contexts: site.contexts ?? {},
       always: site.always ?? [],
       sessionCookie: site.sessionCookie ?? null,
+      oneAtATime: site.oneAtATime ?? null,
     }
   }
 }
@@ -167,6 +168,7 @@ writeFileSync(
 )
 
 const css = sites
+  .map((s) => ({ ...s, hide: [...s.hide, ...(s.oneAtATime?.hide ?? [])] }))
   .filter((s) => s.hide.length)
   .map(
     (s) =>

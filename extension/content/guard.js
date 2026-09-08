@@ -110,6 +110,44 @@
   addEventListener('popstate', enforce)
   enforce()
 
+  // --- one at a time -------------------------------------------------------
+  // On routes listed in `oneAtATime`, the scroll gesture is severed. A Short
+  // you opened on purpose is one video; the swipe that fetches the next one is
+  // what makes it a feed. Clicking through to another Short still works, which
+  // is the distinction asked for -- and it is a distinction no route rule can
+  // make, since both produce the same pushState to /shorts/<id>.
+  if (site.oneAtATime) {
+    const routes = site.oneAtATime.routes.map(anchored)
+    const onGatedRoute = () => routes.some((re) => re.test(location.pathname))
+
+    const smother = (event) => {
+      if (!onGatedRoute()) return
+      event.preventDefault()
+      event.stopPropagation()
+    }
+
+    // passive:false is required or preventDefault on wheel/touchmove is
+    // ignored; capture:true gets us ahead of the page's own handlers.
+    const options = { capture: true, passive: false }
+    addEventListener('wheel', smother, options)
+    addEventListener('touchmove', smother, options)
+
+    const SEQUENTIAL_KEYS = new Set([
+      'ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', ' ', 'Spacebar',
+    ])
+    addEventListener(
+      'keydown',
+      (event) => {
+        if (!SEQUENTIAL_KEYS.has(event.key)) return
+        // Leave typing alone -- otherwise the comment box eats spaces.
+        const el = event.target
+        if (el?.isContentEditable || /^(INPUT|TEXTAREA)$/.test(el?.tagName)) return
+        smother(event)
+      },
+      options,
+    )
+  }
+
   // --- the left rail ------------------------------------------------------
   // Instagram's rail is plain <div>s with obfuscated, rotating class names, so
   // there is no container to scope to. The one durable handle is the aria-label

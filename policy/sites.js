@@ -45,6 +45,7 @@ export const sites = [
     always: ['/signin(/.*)?', '/logout(/.*)?', '/account(_.*)?(/.*)?'],
     allow: [
       '/results',                    // search -- the only intended entry point
+      '/shorts/[^/]+',               // one Short, see `oneAtATime` below
       '/watch',                      // a video you opened from a search
       '/playlist',
       '/feed/you(/.*)?',             // your own channel, history, playlists
@@ -52,10 +53,18 @@ export const sites = [
       '/channel/[^/]+(/.*)?',
     ],
     deny: [
-      '/shorts(/.*)?',
       '/feed/(subscriptions|trending|explore|storefront)',
       '/gaming(/.*)?',
     ],
+    // A Short is a single video you opened, not a channel you entered. Scroll,
+    // swipe and the arrow keys are what turn it into a feed, so those are cut
+    // at the event level -- the URL change from a swipe is indistinguishable
+    // from the one you get by clicking, so no route rule can tell them apart.
+    oneAtATime: {
+      routes: ['/shorts/[^/]+'],
+      hide: ['#navigation-button-down', '#navigation-button-up'],
+    },
+
     hide: [
       'ytd-reel-shelf-renderer',             // Shorts shelf inside search
       'ytd-rich-shelf-renderer[is-shorts]',
