@@ -120,7 +120,7 @@ export const sites = [
     loginUrl: 'https://www.tiktok.com/login',
     label: 'TikTok',
     hosts: ['tiktok.com', 'www.tiktok.com'],
-    landing: '/upload',
+    landing: '/@christianships_',
     always: ['/login(/.*)?', '/logout(/.*)?', '/signup(/.*)?', '/passport(/.*)?'],
     allow: [
       '/search(/.*)?',
