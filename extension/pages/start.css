@@ -33,7 +33,7 @@ main {
    point instead of becoming a full-width bar. */
 #search {
   position: relative;
-  width: min(92%, 44rem);
+  width: min(88%, 40rem);
   margin-inline: auto;
 }
 
@@ -41,9 +41,9 @@ main {
   width: 100%;
   /* Padding is tight relative to the type so the text fills the field rather
      than floating in the middle of it. */
-  padding: 1.35rem 5rem 1.35rem 2rem;
+  padding: 1.15rem 4.5rem 1.15rem 1.75rem;
   font-family: inherit;
-  font-size: 3.5rem;
+  font-size: 2.75rem;
   font-weight: 600;
   line-height: 1.15;
   letter-spacing: -0.02em;
