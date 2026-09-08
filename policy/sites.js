@@ -309,6 +309,25 @@ export const sites = [
   },
 
   {
+    id: 'twitch',
+    loginUrl: 'https://www.twitch.tv/login',
+    label: 'Twitch',
+    hosts: ['twitch.tv', 'www.twitch.tv', 'm.twitch.tv'],
+    landing: '/christianships',
+    always: ['/login(/.*)?', '/logout(/.*)?', '/signup(/.*)?'],
+
+    // Deliberately unrestricted. The only rule here is where the front door
+    // opens: nothing is blocked once you are inside, because Twitch is a place
+    // you go to broadcast rather than one you fall into.
+    allow: ['(/.*)?'],
+    deny: [],
+    hide: [],
+    note:
+      'Landing-only. No routes are denied and nothing is hidden -- the whole ' +
+      'policy is the redirect from the root to your channel.',
+  },
+
+  {
     id: 'reddit',
     loginUrl: 'https://www.reddit.com/login',
     label: 'Reddit',
