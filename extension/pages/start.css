@@ -26,42 +26,82 @@ main {
   padding: 3rem 0;
 }
 
-/* --- search: rounded rectangle, heavy outline --- */
-#search { position: relative; }
+/* --- search ---------------------------------------------------------------
+   Reads as a raised surface rather than an outlined box: it borrows the page
+   background and separates itself with elevation instead of a border. The
+   shadows are layered (tight contact + wide ambient) because a single blur
+   reads as a glow; two read as a physical lift. Narrower than the tile rows on
+   purpose, so it sits as the focal point rather than a full-width bar. */
+#search {
+  position: relative;
+  width: min(78%, 34rem);
+  margin-inline: auto;
+}
 
 #q {
   width: 100%;
-  padding: 1.25rem 4.25rem 1.25rem 1.6rem;
-  font: 500 1.4rem/1 inherit;
+  padding: 1.5rem 4.75rem 1.5rem 1.75rem;
+  font: 600 2rem/1.15 inherit;
+  letter-spacing: -0.02em;
   color: inherit;
-  background: transparent;
-  border: 3px solid var(--ink);
-  border-radius: 1.1rem;
-  outline-offset: 4px;
+  background: color-mix(in srgb, CanvasText 4%, Canvas);
+  border: 1px solid color-mix(in srgb, CanvasText 9%, transparent);
+  border-radius: 1.35rem;
+  outline: none;
+  box-shadow:
+    0 1px 2px color-mix(in srgb, CanvasText 8%, transparent),
+    0 6px 16px -6px color-mix(in srgb, CanvasText 14%, transparent),
+    0 20px 40px -20px color-mix(in srgb, CanvasText 22%, transparent),
+    inset 0 1px 0 color-mix(in srgb, Canvas 70%, transparent);
+  transition: box-shadow 160ms ease, transform 160ms ease, background 160ms ease;
 }
+
 #q::-webkit-search-cancel-button { display: none; }
-#q::placeholder { color: var(--muted); }
+#q::placeholder {
+  color: color-mix(in srgb, CanvasText 32%, transparent);
+  font-weight: 500;
+}
+
+#q:hover {
+  box-shadow:
+    0 1px 2px color-mix(in srgb, CanvasText 10%, transparent),
+    0 10px 22px -8px color-mix(in srgb, CanvasText 18%, transparent),
+    0 28px 52px -24px color-mix(in srgb, CanvasText 26%, transparent),
+    inset 0 1px 0 color-mix(in srgb, Canvas 70%, transparent);
+}
+
+/* Focus lifts it further and adds a ring, so the state is legible without the
+   browser's default outline fighting the rounded corners. */
+#q:focus {
+  background: color-mix(in srgb, CanvasText 2%, Canvas);
+  transform: translateY(-1px);
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, CanvasText 12%, transparent),
+    0 12px 26px -8px color-mix(in srgb, CanvasText 20%, transparent),
+    0 34px 60px -28px color-mix(in srgb, CanvasText 30%, transparent),
+    inset 0 1px 0 color-mix(in srgb, Canvas 70%, transparent);
+}
 
 .lens {
   position: absolute;
-  right: 1.1rem;
+  right: 1.35rem;
   top: 50%;
   translate: 0 -50%;
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   display: grid;
   place-items: center;
   pointer-events: none;
 }
 .lens svg {
-  width: 30px;
-  height: 30px;
+  width: 28px;
+  height: 28px;
   fill: none;
-  stroke: var(--ink);
-  stroke-width: 2.5;
+  stroke: color-mix(in srgb, CanvasText 70%, transparent);
+  stroke-width: 2.25;
   stroke-linecap: round;
 }
-.lens circle { fill: color-mix(in srgb, CanvasText 22%, transparent); }
+.lens circle { fill: color-mix(in srgb, CanvasText 12%, transparent); }
 
 /* --- categories --- */
 #categories { display: grid; gap: 1.75rem; }
