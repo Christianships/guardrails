@@ -41,7 +41,7 @@ export const sites = [
     loginUrl: 'https://accounts.google.com/ServiceLogin?service=youtube',
     label: 'YouTube',
     hosts: ['youtube.com', 'www.youtube.com', 'm.youtube.com'],
-    landing: '/feed/you',
+    landing: '/channel/UC1tfa_mTMeKMXbvfXLFfz1g',
     always: ['/signin(/.*)?', '/logout(/.*)?', '/account(_.*)?(/.*)?'],
     allow: [
       '/results',                    // search -- the only intended entry point

@@ -33,15 +33,40 @@ function urlRegex(hosts, pathPattern) {
 
 // Higher wins. `allowFrom` routes get no rule here at all -- whether they
 // are permitted depends on where you came from, which only the guard knows.
+
+// A landing page that is itself blocked turns every redirect into an infinite
+// loop, so this is checked at build time rather than discovered in the browser.
+for (const site of sites) {
+  if (!site.landing) continue
+  const anchored = (p) => new RegExp(`^${p}/?$`)
+  const path = site.landing
+  const denied = (site.deny ?? []).some((p) => anchored(p).test(path))
+  const allowed =
+    (site.always ?? []).some((p) => anchored(p).test(path)) ||
+    site.allow.some((p) => anchored(p).test(path))
+  if (denied || !allowed) {
+    throw new Error(
+      `${site.id}: landing "${path}" is ${denied ? 'denied' : 'not allowed'} ` +
+        `by its own policy -- redirects would loop forever.`,
+    )
+  }
+}
+
 const PRIORITY = { catchAll: 1, allow: 2, landing: 3, deny: 4, always: 5 }
 
 const rules = []
 let ruleId = 1
 
 for (const site of sites) {
+  // A blocked route lands back on your own page where there is one. The
+  // chrome-extension:// interstitial is kept only for sites with no landing
+  // target, because it carries the sign-in link and those sites' roots are
+  // blocked -- without it they cannot be logged into at all.
   const redirect = {
     type: 'redirect',
-    redirect: { extensionPath: `/${INTERSTITIAL}?site=${site.id}` },
+    redirect: site.landing
+      ? { transform: { path: site.landing } }
+      : { extensionPath: `/${INTERSTITIAL}?site=${site.id}` },
   }
   const condition = (regexFilter) => ({
     regexFilter,

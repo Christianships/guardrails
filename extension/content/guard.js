@@ -82,6 +82,12 @@
         location.replace(site.landing)
         return
       default: {
+        // Bounce back to your own page. The guard against looping is that the
+        // build refuses to compile a landing page its own policy blocks.
+        if (site.landing) {
+          if (path !== site.landing) location.replace(site.landing)
+          return
+        }
         const url = new URL(chrome.runtime.getURL(interstitial))
         url.searchParams.set('site', site.id)
         url.searchParams.set('from', path)
