@@ -209,6 +209,8 @@ const slug = (label) => label.toLowerCase().replace(/[^a-z0-9]+/g, '-')
 const withIcon = (tile) => ({ ...tile, icon: iconMap[slug(tile.label)] ?? null })
 
 // Declared order first, anything unlisted after it, then the ungoverned extras.
+// An extra carrying an `id` is ranked like a governed site; the sort is stable,
+// so id-less extras still trail in their declared order.
 const rank = (id) => {
   const i = socialsOrder.indexOf(id)
   return i === -1 ? socialsOrder.length : i
@@ -217,16 +219,18 @@ const rank = (id) => {
 const socials = {
   id: 'socials',
   label: socialsLabel,
-  tiles: sites
-    .filter((s) => s.landing)
-    .sort((a, b) => rank(a.id) - rank(b.id))
-    .map((s) =>
-      withIcon({
+  tiles: [
+    ...sites
+      .filter((s) => s.landing)
+      .map((s) => ({
+        id: s.id,
         label: s.label,
         url: `https://${s.hosts.find((h) => h.startsWith('www.')) ?? s.hosts[0]}${s.landing}`,
-      }),
-    )
-    .concat(extraSocials.map(withIcon)),
+      })),
+    ...extraSocials,
+  ]
+    .sort((a, b) => rank(a.id) - rank(b.id))
+    .map(({ id, ...tile }) => withIcon(tile)),
 }
 
 writeFileSync(

@@ -50,8 +50,9 @@ export const categories = [
 
 export const socialsLabel = 'Socials'
 
-// Row order, by site id from policy/sites.js. Anything omitted here is
-// appended afterwards, so forgetting an id hides nothing.
+// Row order, by site id from policy/sites.js or an extraSocials `id`.
+// Anything omitted here is appended afterwards, so forgetting an id hides
+// nothing.
 export const socialsOrder = [
   'x', 'linkedin', 'instagram', 'tiktok', 'twitch',
   'youtube', 'reddit', 'facebook', 'threads',
@@ -60,7 +61,9 @@ export const socialsOrder = [
 // Tiles for sites that are NOT governed by policy/sites.js -- they get a link
 // on the start page but no routing rules, no landing redirect and no pruning.
 // Pinterest in particular is an infinite feed and is currently unguarded.
+// An `id` slots the tile into socialsOrder like a governed site.
 export const extraSocials = [
+  { id: 'linkedin', label: 'LinkedIn', url: 'https://www.linkedin.com/in/caguilar0/', color: '#0a66c2' },
   { label: 'Pinterest', url: 'https://www.pinterest.com', color: '#e60023' },
   { label: 'Luma', url: 'https://lu.ma', color: '#111111' },
   { label: 'Partiful', url: 'https://partiful.com', color: '#ffdc4d' },
