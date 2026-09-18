@@ -1,10 +1,14 @@
 /* One small stylesheet, no framework: this paints on every Cmd-T, so anything
    that had to be fetched or parsed first would be felt fifty times a day. */
 :root {
-  /* Pinned dark rather than "light dark": the background is a dark texture, so
+  /* Pinned dark rather than "light dark": the background is a dark photo, so
      following the system into light mode would put dark text on it. Pinning it
      also means every color-mix below resolves against the right base. */
   color-scheme: dark;
+  /* One knob for the whole page's base colour. The photo falls off to true
+     black at its edges, so the scrim, the fallback and the search field are
+     all mixed from this rather than from a separate brown. */
+  --base: #000000;
   --ink: CanvasText;
   --muted: color-mix(in srgb, CanvasText 50%, transparent);
   --hover: color-mix(in srgb, CanvasText 7%, transparent);
@@ -18,18 +22,21 @@ body {
   display: grid;
   place-items: center;
   color: var(--ink);
-  /* The source is 214x120, so it is scaled up hard. `pixelated` makes that a
-     deliberate chunky texture instead of a blurry one -- and matches the
-     pixel-art search glyph. The gradient is a scrim: the texture is busy, and
-     small labels need something flat to sit against. */
+  /* A photograph, so no `image-rendering: pixelated` -- that was for the old
+     214x120 pixel-art tile and would shred this. The lens glyph keeps its hard
+     edges on its own via shape-rendering="crispEdges", so nothing else needs it.
+
+     The scrim is asymmetric on purpose: light at the top where the photo is
+     already black, heavier at the bottom where the lit face sits, so the tile
+     labels down there keep something flat to read against. */
   background:
     linear-gradient(
-      color-mix(in srgb, #120b06 62%, transparent),
-      color-mix(in srgb, #120b06 78%, transparent)
+      color-mix(in srgb, var(--base) 35%, transparent),
+      color-mix(in srgb, var(--base) 72%, transparent) 55%,
+      color-mix(in srgb, var(--base) 88%, transparent)
     ),
-    url('../images/bg.webp') center / cover no-repeat fixed,
-    #23170e;
-  image-rendering: pixelated;
+    url('../images/bg.jpg') center / cover no-repeat fixed,
+    var(--base);
   font: 400 16px/1.5 ui-sans-serif, -apple-system, system-ui, sans-serif;
 }
 
@@ -64,7 +71,7 @@ main {
   line-height: 1.15;
   letter-spacing: -0.02em;
   color: inherit;
-  background: color-mix(in srgb, #0d0805 58%, transparent);
+  background: color-mix(in srgb, var(--base) 55%, transparent);
   backdrop-filter: blur(10px) saturate(120%);
   border: 1px solid color-mix(in srgb, CanvasText 14%, transparent);
   border-radius: 1.6rem;
