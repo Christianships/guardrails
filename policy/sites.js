@@ -49,8 +49,21 @@ export const sites = [
       '/watch',                      // a video you opened from a search
       '/playlist',
       '/feed/you(/.*)?',             // your own channel, history, playlists
-      '/@[^/]+(/(videos|playlists|streams|about))?',
+      '/feed/(history|playlists|library)',
+      '/@[^/]+(/.*)?',               // any tab of a channel a link sent you to
       '/channel/[^/]+(/.*)?',
+      // Link destinations. Anything a link can point at has to be here, or
+      // clicking it bounces you to your own channel instead of where it goes.
+      '/redirect',                   // outbound links in descriptions/comments
+      '/live/[^/]+',
+      '/clip/[^/]+',
+      '/post/[^/]+',                 // community posts
+      '/hashtag/[^/]+',
+      '/embed/[^/]+',
+      '/attribution_link',
+      '/source/[^/]+(/.*)?',         // "sound" / remix pages
+      '/c/[^/]+(/.*)?',              // legacy channel URLs
+      '/user/[^/]+(/.*)?',
     ],
     deny: [
       '/feed/(subscriptions|trending|explore|storefront)',
@@ -66,22 +79,9 @@ export const sites = [
     },
 
     hide: [
-      // Shorts inside search results. YouTube ships several generations of
-      // these components at once, so all of them are listed: the old shelf
-      // renderers, the newer lockup view-models, and -- via :has() -- any
-      // result row or section that turns out to contain a Short.
-      'ytd-reel-shelf-renderer',
+      'ytd-reel-shelf-renderer',             // Shorts shelf inside search
       'ytd-rich-shelf-renderer[is-shorts]',
       'ytd-reel-item-renderer',
-      'grid-shelf-view-model',
-      'ytm-shorts-lockup-view-model',
-      'ytm-shorts-lockup-view-model-v2',     // the outer wrapper; hiding only
-                                             // the inner one leaves its box
-      'ytd-item-section-renderer:has(grid-shelf-view-model)',
-      'ytd-item-section-renderer:has(ytm-shorts-lockup-view-model)',
-      'ytd-rich-section-renderer:has(ytm-shorts-lockup-view-model)',
-      'ytd-video-renderer:has(a[href^="/shorts/"])',
-      'ytd-rich-item-renderer:has(a[href^="/shorts/"])',
       '#related',                            // up-next rail beside a video
       'ytd-compact-video-renderer',
       '.ytp-endscreen-content',              // end-of-video suggestion grid
@@ -201,15 +201,31 @@ export const sites = [
       '/i/history(/.*)?',
       '/compose(/.*)?',       // posting stays open
       '/i/grok(/.*)?',        // kept: a tool, not a feed
+      '/i/jf/creators/studio(/.*)?', // kept: monetization + analytics
       '/[^/]+',               // profiles
-      '/[^/]+/status/[0-9]+',
+      '/[^/]+/status/[0-9]+(/.*)?',   // a post, plus its photo/video/quotes/likes views
+      // Link destinations. Anything a link can point at has to be here, or
+      // clicking it bounces you to your own profile instead of where it goes.
+      '/search-advanced',
+      '/hashtag/[^/]+',
+      '/[^/]+/(with_replies|media|highlights|articles|lists|likes|followers|following|verified_followers|followers_you_follow|affiliates|communities|superfollows)',
+      '/i/(web/)?status/[0-9]+(/.*)?',
+      '/i/spaces/[^/]+(/.*)?',
+      '/i/broadcasts/[^/]+',
+      '/i/events/[^/]+',
+      '/i/lists/[0-9]+(/.*)?',
+      '/i/communities/[0-9]+(/.*)?',
+      '/i/topics/[0-9]+',
+      '/i/articles?/[0-9]+(/.*)?',
+      '/i/bookmarks',
+      '/i/moments/[0-9]+',
+      '/settings(/.*)?',
     ],
     deny: [
       '/',
       '/home',                // the algorithmic timeline
       '/i/trending(/.*)?',
       '/i/chat(/.*)?',
-      '/i/jf/creators/studio(/.*)?',
       '/i/premium_sign_up(/.*)?',
     ],
     // X puts the accessible name on the <a>, not on the <svg> (its icons are
@@ -219,7 +235,6 @@ export const sites = [
         'X',                  // the wordmark, which links to /home
         'Home',
         'Direct Messages',
-        'Creator Studio',
         'Premium',
       ],
     },
@@ -228,7 +243,8 @@ export const sites = [
       '[aria-label="Timeline: Trending now"]',
     ],
     note:
-      'Rail keeps Profile, Explore, Notifications, History, Post and More. ' +
+      'Rail keeps Profile, Explore, Notifications, History, Grok, ' +
+      'Creator Studio, Post and More. ' +
       'Explore is allowed here because on X it is the search surface, unlike ' +
       'Instagram where /explore is a discover grid. The reply timeline under ' +
       'a status is infinite but stays, since removing it breaks reading a ' +
@@ -265,46 +281,6 @@ export const sites = [
       '/me is the one landing target that needs no username. Groups stay ' +
       'open because they are usually the reason to be here at all, but the ' +
       'main feed, Watch, Reels, Stories and Marketplace all go.',
-  },
-
-  {
-    id: 'linkedin',
-    loginUrl: 'https://www.linkedin.com/login',
-    label: 'LinkedIn',
-    hosts: ['linkedin.com', 'www.linkedin.com'],
-    landing: '/in/caguilar0/',
-    always: [
-      '/login(/.*)?', '/logout(/.*)?', '/uas/login(/.*)?',
-      '/checkpoint(/.*)?', '/psettings(/.*)?',
-    ],
-    allow: [
-      '/in/[^/]+(/.*)?',              // profiles, including your own
-      '/search/.*',
-      '/notifications(/.*)?',
-      '/messaging(/.*)?',
-      '/posts/[^/]+(/.*)?',           // a single post someone linked you
-      '/feed(/.*)?',                  // reachable, but only by typing it: the
-                                      // Home button is removed from the nav
-      '/mynetwork(/.*)?',
-      '/company/[^/]+(/.*)?',
-      '/jobs(/.*)?',
-    ],
-    deny: ['/', '/games(/.*)?'],
-
-    // Only Home goes. LinkedIn bakes notification counts into the label
-    // ("Home, 1 new notification"), so these are matched as a prefix.
-    pruneNav: {
-      remove: ['Home'],
-    },
-
-    hide: [
-      '#msg-overlay',                 // the persistent messaging dock
-    ],
-    note:
-      'The feed is allowed but unreachable by clicking -- the Home button is ' +
-      'pruned from the nav, so getting there means typing the URL. Same ' +
-      'shape as Explore on Instagram: intent is the price of entry. The ' +
-      'root still redirects to your profile, so the reflex visit lands there.',
   },
 
   {
