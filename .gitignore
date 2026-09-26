@@ -1,3 +1,5 @@
 dist/guardrails.crx
 dist/*.mobileconfig
 extension/generated/
+# Signing keys never belong in git
+*.pem
